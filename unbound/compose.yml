@@ -1,0 +1,14 @@
+services:
+  unbound:
+    image: mvance/unbound:latest
+    container_name: unbound
+    ports:
+      - "5335:53/udp"
+      - "5335:53/tcp"
+    volumes:
+      - /home/X27/docker/unbound/config:/opt/unbound/etc/unbound
+    restart: unless-stopped
+
+
+
+#Move the unbound.conf under /config

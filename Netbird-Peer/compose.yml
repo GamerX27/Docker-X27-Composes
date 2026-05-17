@@ -1,0 +1,17 @@
+services:
+  netbird-hostname:
+    container_name: HOSTNAME
+    hostname: Hostname
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    devices:
+      - /dev/net/tun
+    network_mode: host
+    environment:
+      - NB_MANAGEMENT_URL=<URL>
+      - NB_SETUP_KEY=<SETUP KEY>
+    volumes:
+      - /home/X27/docker/netbird/data:/var/lib/netbird
+    image: netbirdio/netbird:latest
