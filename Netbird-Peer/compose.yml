@@ -15,3 +15,4 @@ services:
     volumes:
       - /home/X27/docker/netbird/data:/var/lib/netbird
     image: netbirdio/netbird:latest
+    restart: unless-stopped
