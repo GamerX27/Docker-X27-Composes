@@ -1,0 +1,10 @@
+# source https://github.com/louislam/uptime-kuma
+services:
+  uptime-kuma:
+    container_name: Uptime-Kuma
+    image: louislam/uptime-kuma:2
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "3001:3001"

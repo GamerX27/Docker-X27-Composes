@@ -1,7 +1,7 @@
 services:
-  netbird-hostname:
-    container_name: HOSTNAME
-    hostname: Hostname
+  netbird-peer:
+    container_name: hostname
+    hostname: hostname
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
