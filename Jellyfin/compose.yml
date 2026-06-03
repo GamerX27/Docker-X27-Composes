@@ -14,14 +14,17 @@ services:
       - /mnt/Media:/Media
     ports:
       - 8096:8096
-      - 8920:8920
       - 7359:7359/udp
-      - 1900:1900/udp
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+    # For Intel/AMD GPUs (uncomment if using)
+    # devices:
+    #   - /dev/dri:/dev/dri
+
+    #For Nvidia GPUs  (uncomment if using)
+    #   deploy:
+    #     resources:
+    #       reservations:
+    #         devices:
+    #           - driver: nvidia
+    #             count: all
+    #             capabilities: [gpu]
     restart: unless-stopped
