@@ -1,0 +1,175 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 8080:8080/tcp # qBittorrent WebUI
+      - 6881:6881/tcp # qBittorrent Torrenting
+      - 6881:6881/udp # qBittorrent Torrenting
+      - 8989:8989/tcp # Sonarr
+      - 7878:7878/tcp # Radarr
+      - 9696:9696/tcp # Prowlarr
+      - 8191:8191/tcp # FlareSolverr
+
+    volumes:
+      - /home/x27/docker/arr-stack/gluetun:/gluetun
+
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER=Username
+      - OPENVPN_PASSWORD=Password
+      - SERVER_COUNTRIES=Country
+      - OPENVPN_PROTOCOL=udp
+      - VPN_PORT_FORWARDING=on
+
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9999"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Oslo
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+
+    volumes:
+      - /home/x27/docker/arr-stack/qbittorrent/config:/config
+      - /Media/downloads:/downloads
+
+    stop_grace_period: 10s
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    network_mode: "service:gluetun"
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Oslo
+
+    volumes:
+      - /home/x27/docker/arr-stack/prowlarr/config:/config
+
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    network_mode: "service:gluetun"
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Oslo
+
+    volumes:
+      - /home/x27/docker/arr-stack/sonarr/config:/config
+      - /Media:/Media
+      - /Media/downloads:/downloads
+
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: "service:gluetun"
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Oslo
+
+    volumes:
+      - /home/x27/docker/arr-stack/radarr/config:/config
+      - /Media:/Media
+      - /Media/downloads:/downloads
+
+    restart: unless-stopped
+
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    init: true
+
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Europe/Oslo
+      - PORT=5055
+
+    ports:
+      - 5055:5055
+
+    volumes:
+      - /home/x27/docker/arr-stack/seerr/config:/app/config
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1",
+        ]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
+
+    restart: unless-stopped
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    network_mode: "service:gluetun"
+
+    depends_on:
+      gluetun:
+        condition: service_healthy
+
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FILE=${LOG_FILE:-none}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Europe/Oslo
+
+    volumes:
+      - /home/x27/docker/arr-stack/flaresolverr/config:/config
+
+    restart: unless-stopped
