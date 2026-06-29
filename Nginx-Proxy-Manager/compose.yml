@@ -1,0 +1,14 @@
+services:
+  app:
+    container_name: NPM
+    image: 'jc21/nginx-proxy-manager:2.15.1'
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Oslo"
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
