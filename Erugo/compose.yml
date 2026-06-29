@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: eurugo-app
+    image: wardy784/erugo:latest
+    restart: unless-stopped
+    volumes:
+      - ./erugo-storage:/var/www/html/storage
+    ports:
+      - "8080:80"
