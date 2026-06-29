@@ -20,7 +20,7 @@ services:
       - 8191:8191/tcp # FlareSolverr
 
     volumes:
-      - /home/x27/docker/arr-stack/gluetun:/gluetun
+      - ./gluetun:/gluetun
 
     environment:
       - VPN_SERVICE_PROVIDER=protonvpn
@@ -57,7 +57,7 @@ services:
       - TORRENTING_PORT=6881
 
     volumes:
-      - /home/x27/docker/arr-stack/qbittorrent/config:/config
+      - ./qbittorrent/config:/config
       - /Media/downloads:/downloads
 
     stop_grace_period: 10s
@@ -78,7 +78,7 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - /home/x27/docker/arr-stack/prowlarr/config:/config
+      - ./prowlarr/config:/config
 
     restart: unless-stopped
 
@@ -97,7 +97,7 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - /home/x27/docker/arr-stack/sonarr/config:/config
+      - ./sonarr/config:/config
       - /Media:/Media
       - /Media/downloads:/downloads
 
@@ -118,7 +118,7 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - /home/x27/docker/arr-stack/radarr/config:/config
+      - ./radarr/config:/config
       - /Media:/Media
       - /Media/downloads:/downloads
 
@@ -138,7 +138,7 @@ services:
       - 5055:5055
 
     volumes:
-      - /home/x27/docker/arr-stack/seerr/config:/app/config
+      - ./seerr/config:/app/config
 
     healthcheck:
       test:
@@ -170,6 +170,6 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - /home/x27/docker/arr-stack/flaresolverr/config:/config
+      - ./flaresolverr/config:/config
 
     restart: unless-stopped

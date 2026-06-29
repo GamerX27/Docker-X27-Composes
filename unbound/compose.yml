@@ -6,9 +6,7 @@ services:
       - "5335:53/udp"
       - "5335:53/tcp"
     volumes:
-      - /home/X27/docker/unbound/config:/opt/unbound/etc/unbound
+      - ./config:/opt/unbound/etc/unbound
     restart: unless-stopped
-
-
 
 #Move the unbound.conf under /config

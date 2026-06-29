@@ -13,6 +13,6 @@ services:
       - NB_MANAGEMENT_URL=<URL>
       - NB_SETUP_KEY=<SETUP KEY>
     volumes:
-      - /home/X27/docker/netbird/data:/var/lib/netbird
+      - ./data:/var/lib/netbird
     image: netbirdio/netbird:latest
     restart: unless-stopped
