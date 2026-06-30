@@ -1,0 +1,47 @@
+name: nextcloud-aio
+
+services:
+  nextcloud-aio-mastercontainer:
+    image: ghcr.io/nextcloud-releases/all-in-one:latest
+    init: true
+    restart: always
+    container_name: nextcloud-aio-mastercontainer # This line is not allowed to be changed as otherwise AIO will not work correctly
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config # This line is not allowed to be changed as otherwise the built-in backup solution will not work
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      # Stores Nextcloud's data (user files) on the chosen host directory.
+      # ⚠️ Do not change this after the initial Nextcloud installation is done!
+      NEXTCLOUD_DATADIR: /mnt/NextcloudData
+      # Reverse-proxy mode: serve Nextcloud on port 11000 and let your
+      # reverse proxy (e.g. Nginx Proxy Manager) terminate TLS on 443.
+      APACHE_PORT: 11000
+      APACHE_IP_BINDING: 0.0.0.0
+      SKIP_DOMAIN_VALIDATION: true
+
+  netbird-nextcloud:
+    image: netbirdio/netbird:latest
+    container_name: netbird-nextcloud
+    hostname: netbird-nextcloud
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    devices:
+      - /dev/net/tun
+    network_mode: host
+    environment:
+      - NB_MANAGEMENT_URL=<URL>
+      - NB_SETUP_KEY=<SETUP KEY>
+    volumes:
+      - ./netbird-Nextcloud-data:/var/lib/netbird
+
+volumes:
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer # This line is not allowed to be changed as otherwise the built-in backup solution will not work
