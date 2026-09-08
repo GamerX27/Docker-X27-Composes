@@ -1,7 +1,6 @@
 services:
   unbound:
-    build: .
-    image: unbound:local
+    image: ghcr.io/gamerx27/unbound:latest
     container_name: unbound
     restart: unless-stopped
     ports:
