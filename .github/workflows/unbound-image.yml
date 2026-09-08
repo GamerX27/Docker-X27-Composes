@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "unbound/**"
+      - "Self-Built/unbound/**"
       - ".github/workflows/unbound-image.yml"
   schedule:
     # Weekly rebuild so Alpine security patches for unbound land automatically.
@@ -33,7 +33,7 @@ jobs:
 
       - uses: docker/build-push-action@v6
         with:
-          context: unbound
+          context: Self-Built/unbound
           push: true
           no-cache: true
           platforms: linux/amd64,linux/arm64
