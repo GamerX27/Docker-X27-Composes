@@ -20,13 +20,13 @@ services:
       - 8191:8191/tcp # FlareSolverr
 
     volumes:
-      - ./gluetun:/gluetun
+      - ./Services/gluetun/config:/gluetun
 
     environment:
-      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_SERVICE_PROVIDER=protonvpn #VPN Provider
       - VPN_TYPE=openvpn
-      - OPENVPN_USER=Username
-      - OPENVPN_PASSWORD=Password
+      - OPENVPN_USER=user
+      - OPENVPN_PASSWORD=password
       - SERVER_COUNTRIES=Country
       - OPENVPN_PROTOCOL=udp
       - VPN_PORT_FORWARDING=on
@@ -57,8 +57,8 @@ services:
       - TORRENTING_PORT=6881
 
     volumes:
-      - ./qbittorrent/config:/config
-      - /Media/downloads:/downloads
+      - ./Services/qbittorrent/config:/config
+      - /mnt/Media/downloads:/downloads
 
     stop_grace_period: 10s
     restart: unless-stopped
@@ -78,7 +78,7 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - ./prowlarr/config:/config
+      - ./Services/prowlarr/config:/config
 
     restart: unless-stopped
 
@@ -97,9 +97,9 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - ./sonarr/config:/config
-      - /Media:/Media
-      - /Media/downloads:/downloads
+      - ./Services/sonarr/config:/config
+      - /mnt/Media:/Media
+      - /mnt/Media/downloads:/downloads
 
     restart: unless-stopped
 
@@ -118,9 +118,9 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - ./radarr/config:/config
-      - /Media:/Media
-      - /Media/downloads:/downloads
+      - ./Services/radarr/config:/config
+      - /mnt/Media:/Media
+      - /mnt/Media/downloads:/downloads
 
     restart: unless-stopped
 
@@ -128,8 +128,9 @@ services:
     image: ghcr.io/seerr-team/seerr:latest
     container_name: seerr
     init: true
-
     environment:
+      - PUID=1000
+      - PGID=1000
       - LOG_LEVEL=debug
       - TZ=Europe/Oslo
       - PORT=5055
@@ -138,14 +139,10 @@ services:
       - 5055:5055
 
     volumes:
-      - ./seerr/config:/app/config
+      - ./Services/seerr/config:/app/config
 
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1",
-        ]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1"]
       interval: 15s
       timeout: 3s
       retries: 3
@@ -170,6 +167,6 @@ services:
       - TZ=Europe/Oslo
 
     volumes:
-      - ./flaresolverr/config:/config
+      - ./Services/flaresolverr/config:/config
 
     restart: unless-stopped

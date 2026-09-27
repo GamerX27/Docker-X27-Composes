@@ -1,0 +1,5 @@
+# Change ownership to your user (ID 1000)
+sudo chown -R 1000:1000 /mnt/Media
+
+# Set the correct permissions so the user can read/write/execute
+sudo chmod -R 775 /mnt/Media
